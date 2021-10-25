@@ -1,0 +1,17 @@
+.navbar-brand cus {
+	font-family: 'Sacramento', cursive;
+}
+
+.scrollable{
+  overflow-y: auto;
+  height: 300px;
+}
+
+text-trunc {
+  width: 200px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  display: block;
+}
+

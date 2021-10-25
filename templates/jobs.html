@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load forms_tags %}
+
+{% block stylesheet %}
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+{% endblock %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a>
+  <li class="breadcrumb-item active">{{ jobs.name }}</li>
+{% endblock %}
+
+{% block content %}
+
+    <div class="mb-4">
+      <a href="{% url 'post' jobs.pk %}" class="btn btn-secondary">Post a Job</a>
+    </div>
+
+
+<div class="row">
+  <div class="col">
+    <div class="card mb-3">
+      <div class="card-header text-center bg-dark text-white"><strong>INVITATION TO TENDER</strong></div>
+      <div class="card-body">
+
+        
+        <!-- card with events -->
+        {% for event in events %}
+          {% if jobs.name == event.args.product_type %}
+            <div class="card" style="height: 170px;">
+              <div class="card-body">
+                <div class="row g-0">
+                  <div class="col-sm-3">
+
+                    <img
+                      src="{% static 'img/cube.png' %}"
+                      class="img-fluid shadow-5"
+                      alt="..."
+                      width="100" 
+                      height="90"
+                    />
+                    <p class="text-muted text-center">block# <span class="badge rounded-pill bg-light text-dark">{{ event.blockNumber }}</span></p> 
+                                      
+                  </div>
+
+                  <div class="col">
+                    <div class="card-body">
+                      <h5 class="card-title">Tender for <span class="badge rounded-pill bg-light text-dark">{{ event.args.product }}</span></h5>
+                      <p class="card-text">
+                        <small><strong>
+                          Posted by {{ event.args.name }} on <span class="badge rounded-pill bg-light text-dark">{{ event.blockNumber|block_timestamp }} 
+                        </strong></span></small>
+
+                        <form method="POST" action="{% url 'client-info' jobs.id %}">
+                          {% csrf_token %}                         
+                          <button type="submit" class="btn btn-outline-dark btn-block" name="job_num" value="{{ event.args.job }}">Open Tender <span class="badge bg-dark text-white">{{ event.args.job }}</span></button>
+                        </form>
+                      </p>
+
+                    </div>
+                  </div>
+                </div>
+              </div>      
+            </div>
+          <hr>
+          {% endif %}
+        {% endfor %}
+        <!-- endcard -->
+
+      </div>
+    </div>
+  </div>
+
+  <div class="col">
+
+    <!-- card for all blocks -->
+    <div class="card">
+      <div class="card-header text-center bg-dark text-white"><strong>ALL TRANSACTIONS POSTED</strong></div>
+      <div class="card-body">
+        {% for trans in transactions %}
+        
+        <div class="card">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm-2"> 
+                <img
+                      src="{% static 'img/cube.png' %}"
+                      class="img-fluid shadow-5"
+                      alt="..."
+                      width="50" 
+                      height="70"
+                    />                 
+              </div>
+              <div class="col">
+                <p class="card-text">
+                  <small style="width: 350px;
+                  overflow:hidden;
+                  text-overflow:ellipsis;
+                  white-space:nowrap;
+                  display: block;">
+                  <strong>BlockHash:</strong>
+                  <span class="text-muted">
+                    {{ trans.blockNumber|block_hash }}
+                  </span>    
+                  </small>
+
+                  <small style="width: 350px;
+                  overflow:hidden;
+                  text-overflow:ellipsis;
+                  white-space:nowrap;
+                  display: block;">
+                  <strong>ParentHash:</strong>
+                  <span class="text-muted">
+                    {{ trans.blockNumber|parent_hash }}
+                  </span>
+                  </small>
+
+                  <small>
+                  <strong>Miner:</strong>
+                  <span class="text-muted">
+                    {{ trans.blockNumber|miner }}
+                  </span>
+                  </small>
+                  
+                </p>
+              </div>
+              
+            </div>
+            
+
+          </div>
+          <div class="card-footer" style="height: 50px">
+            {% if trans.event == 'Jobs' %}
+              <p class="text-center font-italic">
+                Tender <span class="badge bg-dark text-white">{{ trans.args.job }}</span>
+                in Block <span class="badge bg-dark text-white">{{ trans.blockNumber }}</span>
+              </p>
+            {% elif trans.event == 'Bidders' %}
+               <p class="text-center font-italic">
+                Bid for 
+                Tender <span class="badge bg-dark text-white">{{ trans.args.job_id }}</span>
+                in Block <span class="badge bg-dark text-white">{{ trans.blockNumber }}</span>
+              </p>
+            {% else %}
+              <p class="text-center font-italic">
+                Awarded Bidder for 
+                Tender <span class="badge bg-dark text-white">{{ trans.args.job_id }}</span>
+                in Block <span class="badge bg-dark text-white">{{ trans.blockNumber }}</span>
+              </p>
+            {% endif %}
+          </div>
+        </div>
+        <hr>
+        {% endfor %}
+        
+      </div>
+    </div>
+    <!-- endcard -->
+
+  </div>
+</div>
+
+
+{% endblock %}

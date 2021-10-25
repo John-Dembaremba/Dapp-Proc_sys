@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+
+{% load forms_tags %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a>
+  <li class="breadcrumb-item active"><a href="{% url 'jobs' job.pk %}">{{ job.name }}</a>
+  <li class="breadcrumb-item active">Bidder Information</li>
+{% endblock %}
+
+{% block content %}
+
+<div class="card text-white bg-dark">
+  <div class="card-header">
+    <nav>
+      <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <a class="nav-item nav-link active" id="nav-bidder-tab" data-toggle="tab" href="#nav-bidder" role="tab" aria-controls="nav-home" aria-selected="true">Bidder Information</a>
+        <a class="nav-item nav-link" id="nav-block-tab" data-toggle="tab" href="#nav-block" role="tab" aria-controls="nav-profile" aria-selected="false">Block Information</a>
+      </div>
+    </nav>
+  </div>
+
+  <div class="card-body">
+    {% for info in list %}
+    <div class="tab-content" id="nav-tabContent">
+      <div class="tab-pane fade show active" id="nav-bidder" role="tabpanel" aria-labelledby="nav-bidder-tab">
+        <ul class="list-group">
+          <li class="list-group-item text-dark">
+            <div class="row">
+              <div class="col"><strong>Company:</strong></div>
+              <div class="col col-lg-8">{{ info.suppler_info.args.name }}</div>
+            </div>
+          </li>
+          <li class="list-group-item text-dark">
+            <div class="row">
+              <div class="col"><strong>Account:</strong></div>
+              <div class="col col-lg-8">{{ info.user_details.0 }}</div>
+            </div>
+          </li>
+          <li class="list-group-item text-dark">
+            <div class="row">
+              <div class="col"><strong>Email address:</strong></div>
+              <div class="col col-lg-8">{{ info.user_details.2 }}</div>
+            </div>
+          </li>
+          <li class="list-group-item text-dark">
+            <div class="row">
+              <div class="col"><strong>Physical address:</strong></div>
+              <div class="col col-lg-8">{{ info.user_details.1 }}</div>
+            </div>
+          </li>
+          <li class="list-group-item text-dark">
+            <div class="row">
+              <div class="col"><strong>Contact:</strong></div>
+              <div class="col col-lg-8">+{{ info.user_details.3 }}</div>
+            </div>
+          </li>
+          <li class="list-group-item text-dark">
+            <div class="row">
+              <div class="col"><strong>Price per unity:</strong></div>
+              <div class="col col-lg-8">$ {{ info.suppler_info.args.price_unity }}</div>
+            </div>
+          </li>
+          <li class="list-group-item text-dark">
+            <div class="row">
+              <div class="col"><strong>Total price:</strong></div>
+              <div class="col col-lg-8">$ {{ info.suppler_info.args.total_price }}</div>
+            </div>
+          </li>
+          <li class="list-group-item text-dark">
+            <div class="row">
+              <div class="col"><strong>Tax Clearance Certificate(ZIMRAITF263):</strong></div>
+              <div class="col col-lg-8">{{ info.suppler_info.args.zimraITF263 }}</div>
+            </div>
+           </li>
+          <li class="list-group-item text-dark">
+            <div class="row">
+              <div class="col"><strong>Praz Registration Certificate:</strong></div>
+              <div class="col col-lg-8">{{ info.suppler_info.args.praz }}</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="tab-pane fade" id="nav-block" role="tabpanel" aria-labelledby="nav-block-tab">
+        <ul class="list-group">
+          <li class="list-group-item text-dark">
+            <div class="row">
+              <div class="col"><strong>Block:</strong></div>
+              <div class="col col-lg-9">{{ info.block_data.number }}</div>
+            </div>
+          </li>
+          <li class="list-group-item text-dark">
+            <div class="row">
+              <div class="col"><strong>BlockHash:</strong></div>
+              <div class="col col-lg-9">{{ info.block_data.hash|de_hexBytes }}</div>
+            </div>
+          </li>
+          <li class="list-group-item text-dark">
+            <div class="row">
+              <div class="col"><strong>ParentHash:</strong></div>
+              <div class="col col-lg-9">{{ info.block_data.parentHash|de_hexBytes }}</div>
+            </div>
+          </li>
+          <li class="list-group-item text-dark">
+            <div class="row">
+              <div class="col"><strong>Miner:</strong></div>
+              <div class="col col-lg-9">{{ info.block_data.miner }}</div>
+            </div>
+          </li>
+          <li class="list-group-item text-dark">
+            <div class="row">
+              <div class="col"><strong>Nonce:</strong></div>
+              <div class="col col-lg-9">{{ info.block_data.nonce|de_hexBytes }}</div>
+            </div>
+          </li>
+          
+          <li class="list-group-item text-dark">
+            <div class="row">
+              <div class="col"><strong>Gas Limit:</strong></div>
+              <div class="col col-lg-9">{{ info.block_data.gasLimit }}</div>
+            </div>
+          </li>
+          <li class="list-group-item text-dark">
+            <div class="row">
+              <div class="col"><strong>Gas Used:</strong></div>
+              <div class="col col-lg-9">{{ info.block_data.gasUsed }}</div>
+            </div>
+          </li>
+          <li class="list-group-item text-dark">
+            <div class="row">
+              <div class="col"><strong>Timestamp:</strong></div>
+              <div class="col col-lg-9">{{ info.block_data.timestamp }} sec</div>
+            </div>
+           </li>
+        </ul>
+        
+      </div>
+    </div>
+    <div class="card-footer">
+      {% to_list info.block_data.number info.suppler_info.args.job_id as my_list %}
+      <form method="POST" action="{% url 'bidders' job.id %}">
+        {% csrf_token %}
+        {% with tender_info=my_list %}
+        {% if client.0.args.name == request.user.username %}
+        <button type="submit" class="btn btn-secondary btn-lg btn-block" name="job_num" value="{{ tender_info }}">Award Bidder</button>
+        {% endif %}
+        {% endwith %}
+      </form>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+
+
+{% endblock %}

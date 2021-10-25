@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block eth-acc%} {{ eth_acc }} {% endblock %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item active">Home</li>
+{% endblock %}
+
+{% block content %}
+
+<div id="carouselExampleSlidesOnly" class="carousel slide" data-mdb-ride="carousel">
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <img
+        src="{% static 'img/b1.jpeg' %}"
+        class="d-block w-100"
+        alt="..."
+        width="460" 
+        height="245"
+      />
+    </div>
+    </div>
+</div>
+<hr>
+
+
+<!-- Card -->
+<div class="row">
+ {% for prod in products %} 
+  <div class="col">
+    
+    <div class="card">
+      <img
+        src="{% static 'img/b6.jpg' %}"
+        class="card-img-top"
+        alt="..."
+        width="150" 
+        height="150"
+      />
+      <div class="card-body">
+        <h5 class="card-title">{{ prod.name }}</h5>
+        <p class="card-text">
+            {{ prod.description }}
+        </p>
+        <a href="{% url 'jobs' prod.pk %}" class="btn btn-outline-primary btn-rounded waves-effect" type="button">Get started</a>
+      </div>
+    </div>
+    
+  </div>
+
+{% endfor %}
+</div>
+<!-- Card -->
+{% endblock %}

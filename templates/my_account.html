@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}My account{% endblock %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item active"><a href="{% url 'home' %}">Home</a></li>
+  <li class="breadcrumb-item active">My account</li>
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-lg-6 col-md-8 col-sm-10">
+      <form method="POST">
+        {% csrf_token %}
+          {{ user_form|crispy }}
+          {{ profile_form|crispy }}
+        <button type="submit" class="btn btn-success">Save changes</button>
+      </form>
+    </div>
+  </div>
+{% endblock %}

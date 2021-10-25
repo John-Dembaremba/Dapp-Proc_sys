@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+
+{% load forms_tags %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a>
+  <li class="breadcrumb-item active"><a href="{% url 'jobs' job.pk %}">{{ job.name }}</a>
+  <li class="breadcrumb-item active">Client Information</li>
+{% endblock %}
+
+{% block content %}
+
+<div class="card text-white bg-dark">
+  <div class="card-header">
+    <nav>
+      <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <a class="nav-item nav-link active" id="nav-bidder-tab" data-toggle="tab" href="#nav-bidder" role="tab" aria-controls="nav-home" aria-selected="true">Client Information</a>
+        <a class="nav-item nav-link" id="nav-block-tab" data-toggle="tab" href="#nav-block" role="tab" aria-controls="nav-profile" aria-selected="false">Block Information</a>
+      </div>
+    </nav>
+  </div>
+
+  <div class="card-body">
+    {% for info in list %}
+    <div class="tab-content" id="nav-tabContent">
+      <div class="tab-pane fade show active" id="nav-bidder" role="tabpanel" aria-labelledby="nav-bidder-tab">
+        <ul class="list-group">
+          <li class="list-group-item text-dark">
+            <div class="row">
+              <div class="col"><strong>Company:</strong></div>
+              <div class="col col-lg-8">{{ info.client_info.args.name }}</div>
+            </div>
+          </li>
+          <li class="list-group-item text-dark">
+            <div class="row">
+              <div class="col"><strong>Account:</strong></div>
+              <div class="col col-lg-8">{{ info.user_details.0 }}</div>
+            </div>
+          </li>
+          <li class="list-group-item text-dark">
+            <div class="row">
+              <div class="col"><strong>Email address:</strong></div>
+              <div class="col col-lg-8">{{ info.user_details.2 }}</div>
+            </div>
+          </li>
+          <li class="list-group-item text-dark">
+            <div class="row">
+              <div class="col"><strong>Physical address:</strong></div>
+              <div class="col col-lg-8">{{ info.user_details.1 }}</div>
+            </div>
+          </li>
+          <li class="list-group-item text-dark">
+            <div class="row">
+              <div class="col"><strong>Contact:</strong></div>
+              <div class="col col-lg-8">+{{ info.user_details.3 }}</div>
+            </div>
+          </li>
+          <li class="list-group-item text-dark">
+            <div class="row">
+              <div class="col"><strong>Product:</strong></div>
+              <div class="col col-lg-8">{{ info.client_info.args.product }}</div>
+            </div>
+          </li>
+          <li class="list-group-item text-dark">
+            <div class="row">
+              <div class="col"><strong>Description:</strong></div>
+              <div class="col col-lg-8">{{ info.client_info.args.requirements }}</div>
+            </div>
+          </li>
+          <li class="list-group-item text-dark">
+            <div class="row">
+              <div class="col"><strong>Delivery period:</strong></div>
+              <div class="col col-lg-8">{{ info.client_info.args.delivery_period }} days</div>
+            </div>
+           </li>
+          
+        </ul>
+      </div>
+
+      <div class="tab-pane fade" id="nav-block" role="tabpanel" aria-labelledby="nav-block-tab">
+        <ul class="list-group">
+          <li class="list-group-item text-dark">
+            <div class="row">
+              <div class="col"><strong>Block:</strong></div>
+              <div class="col col-lg-9">{{ info.block_data.number }}</div>
+            </div>
+          </li>
+          <li class="list-group-item text-dark">
+            <div class="row">
+              <div class="col"><strong>BlockHash:</strong></div>
+              <div class="col col-lg-9">{{ info.block_data.hash|de_hexBytes }}</div>
+            </div>
+          </li>
+          <li class="list-group-item text-dark">
+            <div class="row">
+              <div class="col"><strong>ParentHash:</strong></div>
+              <div class="col col-lg-9">{{ info.block_data.parentHash|de_hexBytes }}</div>
+            </div>
+          </li>
+          <li class="list-group-item text-dark">
+            <div class="row">
+              <div class="col"><strong>Miner:</strong></div>
+              <div class="col col-lg-9">{{ info.block_data.miner }}</div>
+            </div>
+          </li>
+          <li class="list-group-item text-dark">
+            <div class="row">
+              <div class="col"><strong>Nonce:</strong></div>
+              <div class="col col-lg-9">{{ info.block_data.nonce|de_hexBytes }}</div>
+            </div>
+          </li>
+          
+          <li class="list-group-item text-dark">
+            <div class="row">
+              <div class="col"><strong>Gas Limit:</strong></div>
+              <div class="col col-lg-9">{{ info.block_data.gasLimit }}</div>
+            </div>
+          </li>
+          <li class="list-group-item text-dark">
+            <div class="row">
+              <div class="col"><strong>Gas Used:</strong></div>
+              <div class="col col-lg-9">{{ info.block_data.gasUsed }}</div>
+            </div>
+          </li>
+          <li class="list-group-item text-dark">
+            <div class="row">
+              <div class="col"><strong>Timestamp:</strong></div>
+              <div class="col col-lg-9">{{ info.block_data.timestamp }} sec</div>
+            </div>
+           </li>
+        </ul>
+        
+      </div>
+    </div>
+    <div class="card-footer">
+      <div class="row">
+        <div class="col-6">             
+            <form method="POST" action="{% url 'bid' job.pk %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-secondary btn-lg btn-block" name="job_id" value="{{ info.client_info.args.job }}">
+                Bid tender
+              </button>
+          </form>
+        </div>
+
+        <div class="col-6">
+          <form method="POST" action="{% url 'bidders' job.pk %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-secondary btn-lg btn-block" name="job_num" value="{{ info.client_info.args.job }}">
+                Suppliers
+              </button>
+          </form>
+        </div>
+
+      </div>
+      
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+
+
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'welcome.html' %}
+
+{% load static %}
+
+  <div class="container">
+      <h1 class="text-center logo my-4">
+          <a href="{% url 'home' %}">Procument System</a>
+      </h1>
+      {% block content %}
+      {% endblock %}
+  </div>
+
+

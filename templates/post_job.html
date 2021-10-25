@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a>
+  <li class="breadcrumb-item active"><a href="{% url 'jobs' job.pk %}">{{ job.name }}</a>
+  <li class="breadcrumb-item active">New Job</li>
+{% endblock %}
+
+{% block content %}
+
+   {% if request.user.profile.EthereumAccount is None %}
+      <p>Show an error to direct user</p>
+   {% else %}
+   
+   <form method="POST" >
+      {% csrf_token %}
+      {% include 'includes/form.html' %}
+      <button type="submit" class="btn btn-success">Post</button>
+   </form>
+      
+   {% endif %}
+{% endblock %}
